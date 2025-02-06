@@ -9,3 +9,7 @@ import (
 func InitializeDB(c context.Context) {
 	database.ConnectMongo(c)
 }
+
+func InitializeSqs(c context.Context) {
+	database.ConnectSqs(c)
+}

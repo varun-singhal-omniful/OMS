@@ -12,6 +12,7 @@ import (
 	"github.com/omniful/go_commons/csv"
 	"github.com/varun-singhal-omniful/oms-service/database"
 	"github.com/varun-singhal-omniful/oms-service/models"
+	"github.com/varun-singhal-omniful/oms-service/service"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -32,6 +33,7 @@ func BulkOrders(c *gin.Context) {
 		c.JSON(400, gin.H{"error": "File not found"})
 		return
 	}
+	service.SetProducer(c, database.Queue, req.FilePath)
 
 	orders, err := performcsvopr(req.FilePath, req.SellerID, req.HubID)
 	if err != nil {
@@ -124,6 +126,8 @@ func performcsvopr(filePath string, sellerID, hubID primitive.ObjectID) ([]*mode
 
 	return orders, nil
 }
+
+// storeOrder inserts a single order into MongoDB
 func storeOrder(order *models.Order) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
