@@ -20,6 +20,7 @@ func main() {
 	context := context.Background()
 	Init.InitializeDB(context)
 	Init.InitializeSqs(context)
+	Init.InitializeKafkaProducer(context)
 	go listeners.SetConsumer()
 	err := router.Initialize(context, server)
 	if err != nil {

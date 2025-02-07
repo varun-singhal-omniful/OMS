@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -11,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/omniful/go_commons/csv"
 	"github.com/varun-singhal-omniful/oms-service/database"
+	"github.com/varun-singhal-omniful/oms-service/kafka"
 	"github.com/varun-singhal-omniful/oms-service/models"
 	"github.com/varun-singhal-omniful/oms-service/service"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -121,6 +123,8 @@ func performcsvopr(filePath string, sellerID, hubID primitive.ObjectID) ([]*mode
 
 	fmt.Println("Final orders:")
 	for _, order := range orders {
+		orderData, _ := json.Marshal(order)
+		kafka.PublishMessageToKafka(orderData, order.ID.Hex())
 		fmt.Printf("Order No: %s, Customer: %s, Total Items: %d\n", order.OrderNo, order.CustomerName, len(order.OrderItems))
 	}
 
