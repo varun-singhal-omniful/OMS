@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.37.14
 	github.com/gin-gonic/gin v1.8.1
 	github.com/joho/godotenv v1.5.1
-	github.com/omniful/go_commons v0.4.67
+	github.com/omniful/go_commons v0.4.69
 	go.mongodb.org/mongo-driver v1.17.2
 )
 
@@ -78,6 +78,7 @@ require (
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
+	go.uber.org/goleak v1.1.12 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.23.0 // indirect
 	golang.org/x/crypto v0.32.0 // indirect

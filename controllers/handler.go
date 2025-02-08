@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -11,6 +12,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/omniful/go_commons/csv"
+	"github.com/omniful/go_commons/http"
+	interservice_client "github.com/omniful/go_commons/interservice-client"
 	"github.com/varun-singhal-omniful/oms-service/database"
 	"github.com/varun-singhal-omniful/oms-service/kafka"
 	"github.com/varun-singhal-omniful/oms-service/models"
@@ -125,6 +128,37 @@ func performcsvopr(filePath string, sellerID, hubID primitive.ObjectID) ([]*mode
 	for _, order := range orders {
 		orderData, _ := json.Marshal(order)
 		kafka.PublishMessageToKafka(orderData, order.ID.Hex())
+		config := interservice_client.Config{
+			ServiceName: "user-service",
+			BaseURL:     "http://localhost:8081/api/V1/sku/",
+			Timeout:     5 * time.Second,
+		}
+		client, _ := interservice_client.NewClientWithConfig(config)
+		url := config.BaseURL + "validate"
+		body := map[string]string{
+			"hub_id": "",
+			"skus":   "",
+		}
+		bodyBytes, _ := json.Marshal(body)
+
+		// if err != nil {
+		// 	return false
+		// }
+		req := &http.Request{
+			Url:     url, // Use configured URL
+			Body:    bytes.NewReader(bodyBytes),
+			Timeout: 7 * time.Second,
+			Headers: map[string][]string{
+				"Content-Type": {"application/json"},
+			},
+		}
+
+		// if err != nil {
+		// 	return
+		// }
+
+		resp, _ := client.Get(req, "/")
+		fmt.Println("resp is", resp)
 		fmt.Printf("Order No: %s, Customer: %s, Total Items: %d\n", order.OrderNo, order.CustomerName, len(order.OrderItems))
 	}
 
